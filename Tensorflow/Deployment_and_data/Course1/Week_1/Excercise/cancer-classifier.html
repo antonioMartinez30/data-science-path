@@ -1,0 +1,80 @@
+<html>
+    <head>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+        <script lang="js">
+            async function run(){
+                const trainingUrl = 'wdbc-train.csv';
+                
+                const trainingData = tf.data.csv(trainingUrl, {
+                    columnConfigs:{
+                        diagnosis:{
+                            isLabel: true
+                        }
+                    }
+                });
+                
+                const convertedTrainingData = 
+                    trainingData.map(({xs, ys}) => {
+                        return {xs: Object.values(xs), ys: Object.values(ys)};
+                    }).batch(10);
+            
+                const testingUrl = 'wdbc-test.csv';
+
+                const testingData = tf.data.csv(testingUrl, {
+                    columnConfigs:{
+                        diagnosis:{
+                            isLabel: true
+                        }
+                    }
+                });
+
+                const convertedTestingData = testingData.map(({xs, ys}) => {
+                        return {xs: Object.values(xs), ys: Object.values(ys)};
+                    }).batch(10);
+
+            const numOfFeatures = (await trainingData.columnNames()).length - 1;
+            //const numOfSamples = 150;
+            
+
+            const model = tf.sequential();
+
+            model.add(tf.layers.dense({inputShape:[numOfFeatures],
+                                       activation:"relu", units: 10}));
+            model.add(tf.layers.dense({activation:"relu", units: 5}));
+            model.add(tf.layers.dense({activation:"sigmoid", units: 1}));
+
+            model.compile({loss: 'binaryCrossentropy',
+            optimizer: 'rmsprop',
+            metrics: 'acc'});
+
+            model.summary();
+
+            await model.fitDataset(
+                convertedTrainingData,
+                {
+                    epochs: 100,
+                    validationData: convertedTestingData,
+                    callbacks: {
+                        onEpochEnd: async(epoch, logs) => {
+                            console.log("Epoch: " + epoch + " Loss: " + logs.loss + " Accuracy: " + logs.acc);
+                        }
+                    }
+                }
+            );
+            
+            await model.save('downloads://my_model');
+            
+            /*
+            const pIndex = tf.argMax(prediction, axis=1).dataSync();
+            
+            const classNames = ["Setosa", "Virginica", "Versicolor"];
+            
+            alert(classNames[pIndex])*/
+            }
+            run();
+        </script>
+    </head>
+    <body>
+        <h1>First HTML page</h1>
+    </body>
+</html>

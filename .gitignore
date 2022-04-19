@@ -1,0 +1,44 @@
+# java compiled class and package
+*.class
+*.jar
+
+
+# intelliJ specific folder
+.idea/
+neptune_local_access/
+target/
+*.iml
+
+# gedit backup files
+*~
+
+# python compile files
+*.pyc
+*.pickle
+.pytest_cache/
+__pycache__/
+
+
+# jupyer notebooks
+.ipynb_checkpoints/
+*.npy
+save/
+
+
+# visual studio
+.vs/
+.vscode/
+
+# bin and dll
+bin/
+
+# Temporary output directories or logs
+temp/
+tmp/
+logs/
+
+# data folders
+data/
+
+# node
+Tensorflow/Deployment_and_data/Course1/Week_2/node_modules/
